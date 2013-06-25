@@ -759,6 +759,23 @@ events.bind(document.getElementById('enable'), 'click', function(e) {
 });
 
 /**
+ * start/stop
+ */
+
+var stopButton = document.getElementById('stop');
+var isStopped = false;
+events.bind(document.getElementById('stop'), 'click', function(){
+
+  if(!isStopped){
+    stopButton.innerText = 'start';
+  }else{
+    stopButton.innerText = 'stop';
+  }
+
+  isStopped = !isStopped;
+});
+
+/**
  * tick
  */
 
@@ -766,23 +783,30 @@ var start = +new Date();
 var timeLeft = duration;
 var scaled = false;
 var piecon = new Piecon();
+var elapsedWhileStopped = 0;
 
 function tick () {
-  displayTime(formatDate(timeLeft));
-  if (!scaled) scale();
-  scaled = true;
-  
-  piecon.update((1 - timeLeft / duration) * 100);
-  
-  if (timeLeft == 0) return notify();
-  
-  timeLeft = start + duration - +new Date();
-  if (timeLeft < 0) timeLeft = 0;
-  
-  setTimeout(tick, 1000);
+  if(isStopped){
+    elapsedWhileStopped += 1000;
+    setTimeout(tick, 1000);
+  }else{
+    displayTime(formatDate(timeLeft));
+    if (!scaled) scale();
+    scaled = true;
+    
+    piecon.update((1 - timeLeft / duration) * 100);
+    
+    if (timeLeft == 0) return notify();
+    
+    timeLeft = start + duration - (+new Date() - elapsedWhileStopped);
+    if (timeLeft < 0) timeLeft = 0;
+
+    setTimeout(tick, 1000);
+  }
 }
 
 tick();
+
 
 /**
  * notification functions
