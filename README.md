@@ -1,3 +1,5 @@
+Update (6/27/13): I added a start/stop button.
+currently hosted on aqueous-river-7337.herokuapp.com
 
 # alrt
 
